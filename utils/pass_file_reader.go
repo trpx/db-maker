@@ -3,10 +3,11 @@ package utils
 import (
 	"bufio"
 	"os"
+	"strings"
 )
 
 // Reads non-empty pass file lines and returns them as a []string
-func readPassFile(file *string) []string {
+func ReadPassFile(file *string) []string {
 	fInfo, err := os.Stat(*file)
 	if err != nil {
 		if os.IsNotExist(err) {
@@ -22,9 +23,18 @@ func readPassFile(file *string) []string {
 	if err != nil {
 		Panicf("couldn't read file '%s' lines: %#v", *file, err)
 	}
-	return lines
+	var nonEmptyLines []string
+	for _, el := range lines {
+		el = strings.TrimSpace(el)
+		if el != "" {
+			nonEmptyLines = append(nonEmptyLines, el)
+		}
+	}
+	if len(nonEmptyLines) == 0 {
+		Panicf("pass file '%s' is empty")
+	}
+	return nonEmptyLines
 }
-
 
 // https://stackoverflow.com/questions/5884154/read-text-file-into-string-array-and-write
 // readLines reads a whole file into memory

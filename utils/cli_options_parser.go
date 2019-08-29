@@ -7,15 +7,15 @@ import (
 )
 
 type Options struct {
-	Engine *string
-	Host *string
-	Port *string
-	AdminUser *string
-	AdminDB *string
+	Engine        *string
+	Host          *string
+	Port          *string
+	AdminUser     *string
+	AdminDB       *string
 	AdminPassFile *string
-	User *string
-	UserDB *string
-	UserPassFile *string
+	User          *string
+	UserDB        *string
+	UserPassFile  *string
 }
 
 func ParseOptions() (opt Options, parseErr error) {
@@ -45,16 +45,32 @@ func ParseOptions() (opt Options, parseErr error) {
 		Panicf("engine '%s' is not supported, the only engine supported for now is 'postgresql'", *opt.Engine)
 	}
 
-	// validate required args
-	for _, i := range [][]string{
-		{"admin-pass-file", *opt.AdminPassFile},
+	adminPasswords, userPasswords := ReadPasswordsFromEnv()
+
+	requiredOptions := [][]string{
 		{"user", *opt.User},
 		{"user-db", *opt.UserDB},
-		{"user-pass-file", *opt.UserPassFile},
-	} {
+	}
+
+	msgPostfix := ""
+	if len(adminPasswords) == 0 && len(*opt.AdminPassFile) == 0 {
+		requiredOptions = append(requiredOptions, []string{"admin-pass-file", *opt.AdminPassFile})
+		msgPostfix += "\nnote: --admin-pass-file may be substituted by setting DB_MAKER_ADMIN_PASSWORDS env variable"
+	}
+	if len(userPasswords) == 0 && len(*opt.UserPassFile) == 0 {
+		requiredOptions = append(requiredOptions, []string{"user-pass-file", *opt.UserPassFile})
+		msgPostfix += "\nnote: --user-pass-file may be substituted by setting DB_MAKER_USER_PASSWORDS env variable"
+	}
+
+	// validate required args
+	var needOptions []string
+	for _, i := range requiredOptions {
 		if len(i[1]) == 0 {
-			Panicf("option --%s is required", i[0])
+			needOptions = append(needOptions, "--"+i[0])
 		}
+	}
+	if len(needOptions) > 0 {
+		Panicf("options %s are required"+msgPostfix, needOptions)
 	}
 
 	// validate unexpected args
