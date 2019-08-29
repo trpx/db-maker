@@ -9,8 +9,5 @@ func FilterNonEmptyLines(lines []string) (nonEmptyLines []string) {
 			nonEmptyLines = append(nonEmptyLines, el)
 		}
 	}
-	if len(nonEmptyLines) == 0 {
-		Panicf("pass file '%s' is empty")
-	}
 	return nonEmptyLines
 }

@@ -3,7 +3,6 @@ package utils
 import (
 	"bufio"
 	"os"
-	"strings"
 )
 
 // Reads non-empty pass file lines and returns them as a []string
@@ -23,13 +22,7 @@ func ReadPassFile(file *string) []string {
 	if err != nil {
 		Panicf("couldn't read file '%s' lines: %#v", *file, err)
 	}
-	var nonEmptyLines []string
-	for _, el := range lines {
-		el = strings.TrimSpace(el)
-		if el != "" {
-			nonEmptyLines = append(nonEmptyLines, el)
-		}
-	}
+	nonEmptyLines := FilterNonEmptyLines(lines)
 	if len(nonEmptyLines) == 0 {
 		Panicf("pass file '%s' is empty")
 	}

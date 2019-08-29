@@ -15,12 +15,6 @@ func ReadPasswordsFromEnv() (adminPasswords []string, userPasswords []string) {
 func ReadNonEmptyLinesFromEnv(envVar string) []string {
 	value := os.Getenv(envVar)
 	lines := strings.Split(value, "\n")
-	var nonEmptyLines []string
-	for _, el := range lines {
-		el = strings.TrimSpace(el)
-		if el != "" {
-			nonEmptyLines = append(nonEmptyLines, el)
-		}
-	}
+	nonEmptyLines := FilterNonEmptyLines(lines)
 	return nonEmptyLines
 }
