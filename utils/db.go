@@ -4,7 +4,7 @@ import (
 	"crypto/md5"
 	"database/sql"
 	"fmt"
-	_ "github.com/lib/pq"
+	_ "github.com/trpx/pq"
 	"io"
 	"strings"
 )
