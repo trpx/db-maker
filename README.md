@@ -14,6 +14,8 @@
         
     --engine string
         db engine (default "postgresql")
+        NOTE: this is a placeholder option, only the default
+              'postgresql' option is supported for now
         
     --host string
         db host (default "localhost")
