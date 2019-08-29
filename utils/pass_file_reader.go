@@ -39,14 +39,18 @@ func ReadPassFile(file *string) []string {
 // https://stackoverflow.com/questions/5884154/read-text-file-into-string-array-and-write
 // readLines reads a whole file into memory
 // and returns a slice of its lines.
-func readLines(path string) ([]string, error) {
+func readLines(path string) (lines []string, fatalErr error) {
 	file, err := os.Open(path)
 	if err != nil {
 		return nil, err
 	}
-	defer file.Close()
+	defer func() {
+		err = file.Close()
+		if err != nil {
+			fatalErr = err
+		}
+	}()
 
-	var lines []string
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
 		lines = append(lines, scanner.Text())
