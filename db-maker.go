@@ -44,8 +44,8 @@ func main() {
 	updatedUserPass := db.UpdateUserPassword(*opt.User, userPasswords[0])
 
 	msg := `updated admin pass:		%v
-created user:		%v
-created db:		%v
+created user '%s':		%v
+created db '%s':		%v
 updated user pass:		%v`
-	fmt.Printf(msg, updatedAdminPass, createdUser, createdDb, updatedUserPass)
+	fmt.Printf(msg, *opt.User, updatedAdminPass, createdUser, *opt.UserDB, createdDb, updatedUserPass)
 }
