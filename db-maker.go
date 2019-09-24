@@ -43,9 +43,38 @@ func main() {
 	createdDb := db.CreateDBIfNotExistsWithOwner(*opt.UserDB, *opt.User)
 	updatedUserPass := db.UpdateUserPassword(*opt.User, userPasswords[0])
 
-	msg := `updated admin pass:		%v
-created user '%s':		%v
-created db '%s':		%v
-updated user pass:		%v`
-	fmt.Printf(msg, *opt.User, updatedAdminPass, createdUser, *opt.UserDB, createdDb, updatedUserPass)
+	// create extensions if any
+	var createdExtensions []string
+	if len(opt.Extensions) > 0 {
+		db := utils.DB{
+			User:      *opt.AdminUser,
+			Passwords: adminPasswords,
+			Name:      *opt.UserDB,
+			Host:      *opt.Host,
+			Port:      *opt.Port,
+		}
+		db.Connect()
+		defer func() {
+			db.Disconnect()
+		}()
+		for _, extension := range opt.Extensions {
+			created := db.CreateExtensionIfNotExists(extension)
+			if created {
+				createdExtensions = append(createdExtensions, extension)
+			}
+		}
+	}
+
+	msg := `updated admin '%s' pass:		%v
+created user '%s':			%v
+created db '%s':			%v
+updated user pass:			%v
+created extensions:			%v`
+	fmt.Printf(
+		msg,
+		*opt.AdminUser, updatedAdminPass,
+		*opt.User, createdUser,
+		*opt.UserDB, createdDb,
+		updatedUserPass, createdExtensions,
+	)
 }

@@ -67,6 +67,28 @@ func (db *DB) CreateDBIfNotExistsWithOwner(dbname string, ownerUsername string) 
 	return true
 }
 
+func (db *DB) CreateExtensionIfNotExists(extension string) (created bool) {
+	extensionExists := db.ExtensionExists(extension)
+	if extensionExists {
+		return false
+	}
+	_, err := db.backend.Exec(fmt.Sprintf("CREATE EXTENSION %s", extension))
+	if err != nil {
+		Panicf("couldn't create extension '%s'\n%v", extension, err)
+	}
+	return true
+}
+
+func (db *DB) ExtensionExists(extension string) (exists bool) {
+	var extCount int
+	err := db.backend.QueryRow("SELECT count(*) FROM pg_extension WHERE extname=$1", extension).Scan(&extCount)
+	if err != nil {
+		Panicf("couldn't fetch existence of extension '%s':\n%v", extension, err)
+	}
+	exists = extCount > 0
+	return exists
+}
+
 func (db *DB) DBExists(dbname string) (exists bool) {
 	var dbCount int
 	err := db.backend.QueryRow("SELECT count(*) FROM pg_database WHERE datname = $1", dbname).Scan(&dbCount)

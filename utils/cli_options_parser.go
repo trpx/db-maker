@@ -4,12 +4,14 @@ import (
 	"errors"
 	"flag"
 	"fmt"
+	"strings"
 )
 
 type Options struct {
 	Engine        *string
 	Host          *string
 	Port          *string
+	Extensions    []string
 	AdminUser     *string
 	AdminDB       *string
 	AdminPassFile *string
@@ -29,6 +31,7 @@ func ParseOptions() (opt Options, parseErr error) {
 
 	opt.Host = flag.String("host", "localhost", "db host")
 	opt.Port = flag.String("port", "5432", "db port")
+	extensions := flag.String("extensions", "", "comma-separated list of extensions")
 
 	opt.AdminUser = flag.String("admin-user", "postgres", "db port")
 	opt.AdminDB = flag.String("admin-db", "postgres", "db port")
@@ -76,6 +79,13 @@ func ParseOptions() (opt Options, parseErr error) {
 	// validate unexpected args
 	if len(flag.Args()) > 0 {
 		Panicf("unexpected args: %s", flag.Args())
+	}
+
+	opt.Extensions = strings.Split(*extensions, ",")
+	for _, ext := range opt.Extensions {
+		if ext[:3] != "pg_" {
+			Panicf("Extension names must start with 'pg_', got '%s'", ext)
+		}
 	}
 
 	return opt, parseErr
