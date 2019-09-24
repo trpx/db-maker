@@ -82,11 +82,6 @@ func ParseOptions() (opt Options, parseErr error) {
 	}
 
 	opt.Extensions = strings.Split(*extensions, ",")
-	for _, ext := range opt.Extensions {
-		if ext[:3] != "pg_" {
-			Panicf("Extension names must start with 'pg_', got '%s'", ext)
-		}
-	}
 
 	return opt, parseErr
 }

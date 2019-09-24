@@ -32,6 +32,10 @@
     --user-pass-file string
         file with user passwords, one per line
         (not required if DB_USER_PASSWORDS env var is set accordingly)
+        
+    --extensions string
+        comma-separated list of extensions to create in the user-db,
+        e.g. "pg_trgm,pg_shard"
 
 
 ## Example
@@ -39,13 +43,13 @@
 NOTE: at least one line of `--admin-pass-file` in this example contains the actual admin user password
 (and real cases must adhere to this requirement)
 
-`db-maker.go --admin-pass-file adminpass.txt --user user1 --user-db db1 --user-pass-file userpass.txt`
+`db-maker.go --admin-pass-file adminpass.txt --user user1 --user-db db1 --user-pass-file userpass.txt --extensions pg_trgm`
 
 this command fetches passwords from `adminpass.txt` and `userpass.txt`, sets `--admin-user` 
 password to the first non-empty line of the `adminpass.txt` file, creates `--user`
 with the first non-empty line of `--user-pass-file` as the user's password, creates `--user-db`
 with owner `--user`, updates `--user` password to the first non empty line of `--user-pass-file`
-if it is not his password yet
+if it is not his password yet, creates `pg_trgm` extension in the `db1` database.
 
 `--admin-pass-file` and `--user-pass-file` may be substituted with:
 DB_ADMIN_PASSWORDS=`printf "PASS1\nPASS2\n..."`
