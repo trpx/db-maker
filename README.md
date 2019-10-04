@@ -43,7 +43,7 @@
 NOTE: at least one line of `--admin-pass-file` in this example contains the actual admin user password
 (and real cases must adhere to this requirement)
 
-`db-maker.go --admin-pass-file adminpass.txt --user user1 --user-db db1 --user-pass-file userpass.txt --extensions pg_trgm`
+`db-maker --admin-pass-file adminpass.txt --user user1 --user-db db1 --user-pass-file userpass.txt --extensions pg_trgm`
 
 this command fetches passwords from `adminpass.txt` and `userpass.txt`, sets `--admin-user` 
 password to the first non-empty line of the `adminpass.txt` file, creates `--user`
